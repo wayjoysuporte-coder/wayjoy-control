@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102d46">
+  <meta name="description" content="Painel privado de gestão estratégica da Wayjoy.">
+  <title>Wayjoy Control Center</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png">
+  <style>
+    :root{--navy:#102d46;--teal:#168b8b;--mint:#66d8c7;--cream:#f7f6f0;--ink:#182a37;--muted:#637381;--line:#dce5e5;--white:#fff;--orange:#f3a64a}
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--cream);color:var(--ink)}
+    button,input,select,textarea{font:inherit}button{cursor:pointer}
+    .app{min-height:100vh;display:grid;grid-template-columns:250px 1fr}
+    aside{background:var(--navy);color:#fff;padding:24px 16px;display:flex;flex-direction:column;gap:22px}
+    .brand{display:flex;gap:12px;align-items:center;padding:0 8px}.mark{width:44px;height:44px;border-radius:14px;background:var(--mint);color:var(--navy);display:grid;place-items:center;font-weight:900;font-size:22px}.brand h1{font-size:17px;line-height:1.1;margin:0}.brand small{display:block;color:#bdd5dc;font-weight:400;margin-top:5px;font-size:11px}
+    nav{display:grid;gap:6px}nav button{border:0;text-align:left;padding:11px 12px;border-radius:10px;background:transparent;color:#d9e6eb;font-size:13px}nav button.active,nav button:hover{background:#21455d;color:#fff}
+    .side-note{margin-top:auto;color:#bdd5dc;font-size:11px;line-height:1.5;padding:12px}
+    main{padding:28px;min-width:0;max-width:1500px;width:100%;margin:0 auto}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:25px}.eyebrow{color:var(--teal);font-weight:800;font-size:11px;letter-spacing:.12em;text-transform:uppercase}.top h2{font-size:27px;margin:5px 0}.sub{color:var(--muted);font-size:13px;margin:0}.status{background:#e0f5ef;color:#176e5b;border-radius:999px;padding:8px 12px;font-size:11px;font-weight:800;white-space:nowrap}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 4px 15px #18344808}.metric-label{font-size:12px;color:var(--muted)}.metric{font-size:23px;font-weight:800;margin:10px 0 6px}.metric-foot{font-size:11px;color:var(--muted)}.section{margin-top:22px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.section h3{font-size:16px;margin:0}.btn{border:0;border-radius:10px;padding:10px 13px;background:var(--navy);color:white;font-weight:700;font-size:12px}.btn.secondary{background:#e6f5f2;color:#176b68}.btn.outline{background:white;border:1px solid var(--line);color:var(--ink)}.btn.warn{background:#fff1df;color:#89500b}
+    .two{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.task{display:flex;gap:11px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #edf1f1}.task:last-child{border-bottom:0}.task input{margin-top:4px;accent-color:var(--teal)}.task strong{font-size:13px;display:block}.task small{font-size:11px;color:var(--muted);display:block;margin-top:4px}.tag{font-size:10px;border-radius:999px;padding:5px 8px;background:#edf5f5;color:#42606b;white-space:nowrap}.tag.high{background:#fff0df;color:#8a4f06}.tag.done{background:#e0f5ef;color:#176e5b}
+    .module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.module{background:white;border:1px solid var(--line);border-radius:14px;padding:16px;text-align:left;min-height:120px}.module:hover{border-color:var(--teal);transform:translateY(-1px)}.module .emoji{font-size:20px}.module strong{display:block;margin:10px 0 5px;font-size:13px}.module small{color:var(--muted);font-size:11px;line-height:1.4}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:grid;gap:6px}.field label{font-size:12px;font-weight:700}.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:9px;padding:11px;background:#fff;width:100%;color:var(--ink)}.field textarea{min-height:90px;resize:vertical}.full{grid-column:1/-1}.notice{background:#fff6e7;border:1px solid #f1d6a9;border-radius:12px;padding:13px;color:#6c4a1b;font-size:12px;line-height:1.5}.muted{color:var(--muted)}.list-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #edf1f1;font-size:12px}.list-row:last-child{border-bottom:0}.hidden{display:none!important}.bottom-nav{display:none}
+    @media(max-width:950px){.app{grid-template-columns:1fr}aside{padding:13px;gap:12px}.brand{padding:0 4px}nav{display:flex;overflow:auto;gap:6px}nav button{white-space:nowrap;padding:9px}.side-note{display:none}main{padding:18px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.top h2{font-size:23px}}
+    @media(max-width:520px){main{padding:14px}.grid{gap:9px}.card{padding:13px}.metric{font-size:19px}.module-grid{grid-template-columns:1fr 1fr}.module{padding:12px;min-height:110px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.status{font-size:10px}.top{align-items:flex-start}.top h2{font-size:21px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand"><div class="mark">W</div><div><h1>WAYJOY <span style="color:var(--mint)">CONTROL</span></h1><small>Central de gestão da startup</small></div></div>
+    <nav id="nav">
+      <button class="active" data-page="inicio">⌂ &nbsp; Visão geral</button>
+      <button data-page="estrategia">◎ &nbsp; Agente estratégico</button>
+      <button data-page="produto">▦ &nbsp; MVP e produto</button>
+      <button data-page="crm">♙ &nbsp; CRM comercial</button>
+      <button data-page="marketing">✦ &nbsp; Marketing</button>
+      <button data-page="financeiro">＄ &nbsp; Financeiro</button>
+      <button data-page="mercado">⌕ &nbsp; Mercado e concorrentes</button>
+      <button data-page="indicadores">▥ &nbsp; Sucesso e riscos</button>
+      <button data-page="agenda">▣ &nbsp; Agenda e tarefas</button>
+      <button data-page="ia">✧ &nbsp; Agentes de IA</button>
+      <button data-page="ideias">◇ &nbsp; Validador de ideias</button>
+      <button data-page="documentos">▤ &nbsp; Documentos</button>
+      <button data-page="integracoes">↔ &nbsp; Integrações futuras</button>
+    </nav>
+    <div class="side-note">Central Wayjoy · Dados compartilhados pelo Supabase após o login.</div>
+  </aside>
+  <main>
+    <div class="top"><div><div class="eyebrow">Painel de controle</div><h2 id="pageTitle">Visão geral</h2><p class="sub" id="pageSub">Uma visão organizada das prioridades da Wayjoy.</p></div><span class="status">● Aguardando conexão</span></div>
+    <section id="inicio" class="page">
+      <div class="grid">
+        <div class="card"><div class="metric-label">Etapa atual</div><div class="metric">MVP</div><div class="metric-foot">Em validação</div></div>
+        <div class="card"><div class="metric-label">Frente comercial</div><div class="metric">Initial Games</div><div class="metric-foot">Teste aceito; ainda não iniciado</div></div>
+        <div class="card"><div class="metric-label">Receita validada</div><div class="metric">A confirmar</div><div class="metric-foot">Não assumir vendas antes dos dados</div></div>
+        <div class="card"><div class="metric-label">Foco recomendado</div><div class="metric">Validar</div><div class="metric-foot">Demanda, uso e disposição a pagar</div></div>
+      </div>
+      <div class="section two">
+        <div class="card"><div class="section-head"><h3>Prioridades da semana</h3><button class="btn secondary" onclick="go('agenda')">Abrir agenda</button></div><div id="homeTasks"></div></div>
+        <div class="card"><div class="section-head"><h3>Registro rápido de decisão</h3></div>
+          <form id="quickDecision" class="form-grid">
+            <div class="field full"><label>Decisão ou hipótese</label><input name="decision" required placeholder="Ex.: lojistas pagariam por destaque"></div>
+            <div class="field"><label>Confiança atual</label><select name="confidence"><option>Baixa</option><option selected>Média</option><option>Alta</option></select></div>
+            <div class="field"><label>Tipo</label><select name="kind"><option>Hipótese</option><option>Decisão</option><option>Resultado de teste</option></select></div>
+            <div class="field full"><label>Evidência / próximo teste</label><textarea name="evidence" placeholder="O que sabemos e como vamos testar?"></textarea></div>
+            <div class="full"><button class="btn" type="submit">Salvar registro</button></div>
+          </form>
+        </div>
+      </div>
+      <div class="section"><div class="section-head"><h3>Todos os módulos</h3><span class="muted" style="font-size:11px">Selecione para abrir</span></div><div class="module-grid" id="moduleCards"></div></div>
+      <div class="section notice"><strong>Importante:</strong> esta versão não está conectada ao banco do MVP nem a contas de terceiros. Os registros ficam no armazenamento local deste navegador. Para uso real com dados empresariais, será necessário configurar autenticação, backup, permissões e backend seguro.</div>
+    </section>
+    <section id="estrategia" class="page hidden">
+      <div class="card"><h3>Agente estratégico Wayjoy</h3><p class="sub">Transforme uma dúvida em decisão com evidências, riscos e próximos passos.</p><form id="strategyForm" class="form-grid" style="margin-top:16px">
+        <div class="field full"><label>Questão estratégica</label><textarea name="question" required placeholder="Ex.: como iniciar o piloto com a Initial Games?"></textarea></div>
+        <div class="field"><label>Horizonte</label><select name="horizon"><option>Esta semana</option><option>30 dias</option><option>90 dias</option><option>12 meses</option></select></div>
+        <div class="field"><label>Restrição principal</label><select name="constraint"><option>Orçamento enxuto</option><option>Tempo disponível</option><option>Equipe técnica</option><option>Aquisição de lojistas</option><option>Aquisição de consumidores</option></select></div>
+        <div class="full"><button class="btn" type="submit">Preparar briefing estratégico</button></div>
+      </form><div id="strategyOutput" class="section"></div></div>
+    </section>
+    <section id="produto" class="page hidden">
+      <div class="card"><div class="section-head"><h3>Checklist do MVP</h3><button class="btn secondary" onclick="addTaskPrompt()">+ Nova tarefa</button></div><div id="productTasks"></div></div>
+    </section>
+    <section id="crm" class="page hidden">
+      <div class="card"><h3>CRM de lojistas e parceiros</h3><p class="sub">Registre contatos e próximos passos. Não insira dados sensíveis desnecessários.</p><form id="crmForm" class="form-grid" style="margin:16px 0">
+        <div class="field"><label>Loja / parceiro</label><input name="store" required placeholder="Nome da loja"></div><div class="field"><label>Contato / responsável</label><input name="contact" placeholder="Nome"></div>
+        <div class="field"><label>Etapa</label><select name="stage"><option>Lead identificado</option><option>Contato iniciado</option><option>Apresentação agendada</option><option>Interessado em testar</option><option>Piloto em andamento</option><option>Convertido</option><option>Sem avanço</option></select></div>
+        <div class="field"><label>Próxima ação</label><input name="next" placeholder="Ex.: marcar demonstração"></div>
+        <div class="field full"><label>Notas</label><textarea name="notes" placeholder="Interesse, dúvidas e combinado"></textarea></div><div class="full"><button class="btn">Adicionar ao CRM</button></div>
+      </form><div id="crmList"></div></div>
+    </section>
+    <section id="marketing" class="page hidden">
+      <div class="card"><h3>Briefing de campanha</h3><form id="marketingForm" class="form-grid" style="margin-top:16px">
+        <div class="field"><label>Segmento</label><select name="segment"><option>Games e eletrônicos</option><option>Moda</option><option>Perfumes e beleza</option><option>Alimentação</option><option>Serviços</option><option>Shopping</option></select></div>
+        <div class="field"><label>Objetivo</label><select name="goal"><option>Atrair visitas à loja</option><option>Divulgar produto</option><option>Gerar vendas</option><option>Captar lojistas para piloto</option><option>Aumentar downloads do app</option></select></div>
+        <div class="field"><label>Canal</label><select name="channel"><option>Instagram</option><option>WhatsApp</option><option>Wayjoy</option><option>Apresentação comercial</option><option>Multicanal</option></select></div>
+        <div class="field"><label>Oferta / mensagem</label><input name="offer" placeholder="Descreva a oferta, se houver"></div>
+        <div class="full"><button class="btn" type="submit">Gerar briefing para o assistente</button></div></form><div id="marketingOutput" class="section"></div></div>
+    </section>
+    <section id="financeiro" class="page hidden">
+      <div class="card"><h3>Simulador financeiro simples</h3><p class="sub">Cenários ilustrativos, não previsão de receita.</p><form id="financeForm" class="form-grid" style="margin-top:16px">
+        <div class="field"><label>Custo mensal (R$)</label><input name="cost" type="number" min="0" value="300" required></div>
+        <div class="field"><label>Mensalidade por lojista (R$)</label><input name="price" type="number" min="0" value="99" required></div>
+        <div class="field"><label>Número de lojistas pagantes</label><input name="stores" type="number" min="0" value="5" required></div>
+        <div class="field"><label>Outras receitas mensais (R$)</label><input name="other" type="number" min="0" value="0" required></div>
+        <div class="full"><button class="btn">Calcular cenário</button></div></form><div id="financeOutput" class="section"></div></div>
+    </section>
+    <section id="mercado" class="page hidden">
+      <div class="card"><h3>Radar de mercado e concorrentes</h3><p class="sub">Registre observações verificáveis; pesquisas atualizadas precisam ser feitas antes de concluir tendências.</p><form id="marketForm" class="form-grid" style="margin:16px 0">
+        <div class="field"><label>Concorrente / tendência</label><input name="subject" required placeholder="Nome ou tema"></div><div class="field"><label>Fonte / link</label><input name="source" placeholder="URL ou referência"></div>
+        <div class="field full"><label>Observação</label><textarea name="observation" required placeholder="O que foi observado?"></textarea></div><div class="full"><button class="btn">Registrar observação</button></div></form><div id="marketList"></div></div>
+    </section>
+    <section id="indicadores" class="page hidden">
+      <div class="grid">
+        <div class="card"><div class="metric-label">Hipóteses registradas</div><div class="metric" id="countHyp">0</div><div class="metric-foot">No navegador atual</div></div>
+        <div class="card"><div class="metric-label">Confiança alta</div><div class="metric" id="countHigh">0</div><div class="metric-foot">Não significa sucesso garantido</div></div>
+        <div class="card"><div class="metric-label">Testes/resultados</div><div class="metric" id="countTests">0</div><div class="metric-foot">Registros classificados como teste</div></div>
+        <div class="card"><div class="metric-label">Riscos em aberto</div><div class="metric" id="countRisk">1</div><div class="metric-foot">Revisar com evidências novas</div></div>
+      </div>
+      <div class="section card"><div class="section-head"><h3>Histórico de decisões e evidências</h3><button class="btn outline" onclick="exportData()">Exportar dados JSON</button></div><div id="decisionList"></div><div class="notice" style="margin-top:12px">Não existe base suficiente para atribuir uma porcentagem confiável de sucesso à Wayjoy. Primeiro precisamos coletar dados de uso, retenção, conversão, disposição a pagar e custos. Os números deste painel são contagens dos registros, não probabilidades de sucesso.</div></div>
+    </section>
+    <section id="agenda" class="page hidden">
+      <div class="card"><div class="section-head"><h3>Agenda de execução</h3><button class="btn secondary" onclick="addTaskPrompt()">+ Adicionar tarefa</button></div><form id="taskForm" class="form-grid" style="margin:14px 0"><div class="field"><label>Tarefa</label><input name="task" required placeholder="O que precisa ser feito?"></div><div class="field"><label>Prioridade</label><select name="priority"><option>Alta</option><option selected>Média</option><option>Baixa</option></select></div><div class="field"><label>Responsável</label><input name="owner" placeholder="Ex.: Rafael / Roner"></div><div class="field"><label>Prazo</label><input name="due" type="date"></div><div class="full"><button class="btn">Salvar tarefa</button></div></form><div id="agendaList"></div></div>
+    </section>
+    <section id="ia" class="page hidden">
+      <div class="card"><h3>Catálogo de agentes de IA</h3><p class="sub">Desenho de funções desejadas; estes agentes não estão rodando automaticamente nesta versão.</p><div id="agentList"></div></div>
+    </section>
+    <section id="ideias" class="page hidden">
+      <div class="card"><h3>Validador de ideias</h3><form id="ideaForm" class="form-grid" style="margin-top:16px"><div class="field full"><label>Nova ideia</label><input name="idea" required placeholder="Ex.: recomendação de presentes com IA"></div><div class="field"><label>Valor para cliente (1–5)</label><input name="value" type="number" min="1" max="5" value="4"></div><div class="field"><label>Esforço técnico (1–5)</label><input name="effort" type="number" min="1" max="5" value="3"></div><div class="field"><label>Potencial de receita (1–5)</label><input name="revenue" type="number" min="1" max="5" value="3"></div><div class="field"><label>Urgência (1–5)</label><input name="urgency" type="number" min="1" max="5" value="3"></div><div class="full"><button class="btn">Avaliar ideia</button></div></form><div id="ideaOutput" class="section"></div></div>
+    </section>
+    <section id="documentos" class="page hidden">
+      <div class="card"><h3>Gerador de briefing e documentos</h3><form id="docsForm" class="form-grid" style="margin-top:16px"><div class="field"><label>Tipo de material</label><select name="type"><option>Apresentação para lojista</option><option>Pitch para investidor</option><option>Resumo executivo</option><option>Relatório de validação</option><option>Plano de campanha</option><option>Relatório semanal</option></select></div><div class="field"><label>Público</label><input name="audience" placeholder="Ex.: lojista de games"></div><div class="field full"><label>Objetivo / informações que devem entrar</label><textarea name="brief" required placeholder="O que o material precisa alcançar?"></textarea></div><div class="full"><button class="btn">Preparar pedido para o assistente</button></div></form><div id="docsOutput" class="section"></div></div>
+    </section>
+    <section id="integracoes" class="page hidden">
+      <div class="notice"><strong>Porta aberta para o futuro:</strong> nenhum serviço externo está conectado nesta versão. Esta área registra as integrações planejadas sem interferir no MVP atual.</div>
+      <div class="section grid">
+        <div class="card"><div class="metric-label">MVP Wayjoy</div><div class="metric">Planejado</div><div class="metric-foot">Conectar somente após documentar API e permissões.</div></div>
+        <div class="card"><div class="metric-label">E-mail oficial</div><div class="metric">Planejado</div><div class="metric-foot">Autorizar conta e definir leitura/envio.</div></div>
+        <div class="card"><div class="metric-label">Banco compartilhado</div><div class="metric">Necessário</div><div class="metric-foot">Substituir armazenamento local antes do uso em equipe.</div></div>
+        <div class="card"><div class="metric-label">Login por pessoa</div><div class="metric">Necessário</div><div class="metric-foot">Autenticação segura e permissões no servidor.</div></div>
+      </div>
+      <div class="section card">
+        <h3>Mapa de integração</h3><p class="sub">A arquitetura deve permitir conectar novos serviços por adaptadores, sem espalhar dependências pela interface.</p>
+        <div class="list-row"><div><strong>1. Camada de interface</strong><div class="muted">Painel e módulos independentes da tecnologia do MVP.</div></div><span class="tag">Agora</span></div>
+        <div class="list-row"><div><strong>2. Camada de serviços</strong><div class="muted">Pontos de conexão documentados para autenticação, dados, e-mail e APIs.</div></div><span class="tag">Preparar</span></div>
+        <div class="list-row"><div><strong>3. Backend e banco central</strong><div class="muted">Dados compartilhados, permissões por função, logs e backup.</div></div><span class="tag">Antes da equipe</span></div>
+        <div class="list-row"><div><strong>4. Conector do MVP</strong><div class="muted">Somente leitura inicialmente; operações de escrita depois de testes e autorização.</div></div><span class="tag">Futuro</span></div>
+        <div class="list-row"><div><strong>5. Conector de e-mail</strong><div class="muted">Começar com pesquisa/resumo e rascunhos; envio após autorização explícita.</div></div><span class="tag">Futuro</span></div>
+      </div>
+      <div class="section card"><h3>Registrar necessidade de integração</h3><form id="integrationForm" class="form-grid" style="margin-top:16px">
+        <div class="field"><label>Serviço</label><select name="service"><option>MVP Wayjoy</option><option>E-mail Wayjoy</option><option>Autenticação</option><option>Banco de dados</option><option>Notificações</option><option>Outro</option></select></div>
+        <div class="field"><label>Prioridade</label><select name="priority"><option>Baixa</option><option selected>Média</option><option>Alta</option></select></div>
+        <div class="field full"><label>O que precisa conectar?</label><textarea name="need" required placeholder="Ex.: ler promoções aprovadas no MVP, sem editar dados"></textarea></div>
+        <div class="field full"><label>Condição para liberar</label><input name="condition" placeholder="Ex.: API documentada, permissão aprovada e teste concluído"></div>
+        <div class="full"><button class="btn" type="submit">Salvar no plano de integrações</button></div>
+      </form><div id="integrationList" class="section"></div></div>
+    </section>
+    <footer class="section muted" style="font-size:11px;padding:8px 2px">Wayjoy Control Center · Protótipo inicial · Não substitui sistema contábil, CRM de produção ou backend seguro.</footer>
+  </main>
+</div>
+<script>
+const modules=[
+ ['estrategia','◎','Agente estratégico','Decisões, prioridades e planos de execução.'],
+ ['produto','▦','MVP e produto','Checklist de validação, problemas e melhorias.'],
+ ['crm','♙','CRM comercial','Lojistas, contatos e próximos passos.'],
+ ['marketing','✦','Marketing e campanhas','Briefings para campanhas e aquisição.'],
+ ['financeiro','＄','Financeiro','Custos, preços e ponto de equilíbrio.'],
+ ['mercado','⌕','Mercado e concorrentes','Observações, fontes e oportunidades.'],
+ ['indicadores','▥','Sucesso e riscos','Evidências, confiança e métricas.'],
+ ['agenda','▣','Agenda e tarefas','Responsáveis, prioridades e prazos.'],
+ ['ia','✧','Agentes de IA','Catálogo de assistentes planejados.'],
+ ['ideias','◇','Validador de ideias','Valor, esforço, receita e urgência.'],
+ ['documentos','▤','Documentos','Briefings, apresentações e relatórios.'],
+ ['integracoes','↔','Integrações futuras','Porta aberta para e-mail, MVP, banco de dados e serviços.']
+];
+const defaults=[
+ {task:'Confirmar acessos e ajustes pendentes do MVP',priority:'Alta',owner:'Rafael / Roner',due:'',done:false},
+ {task:'Agendar a demonstração/teste com a Initial Games',priority:'Alta',owner:'Rafael',due:'',done:false},
+ {task:'Definir métricas do piloto: visualizações, contatos e conversões',priority:'Alta',owner:'Rafael / Roner',due:'',done:false},
+ {task:'Registrar custos mensais reais e proposta de preço',priority:'Média',owner:'Rafael',due:'',done:false}
+];
+const productDefaults=[
+ {task:'Conferir login e permissões de acesso',priority:'Alta',owner:'Roner',due:'',done:false},
+ {task:'Validar cadastro e publicação de produtos/promoções',priority:'Alta',owner:'Roner',due:'',done:false},
+ {task:'Preparar fluxo de demonstração para lojista',priority:'Alta',owner:'Rafael / Roner',due:'',done:false},
+ {task:'Definir como medir o resultado do primeiro piloto',priority:'Alta',owner:'Rafael',due:'',done:false}
+];
+const agents=[['Agente estratégico','Coordena prioridades, decisões e objetivos.'],['Agente comercial','Organiza prospecção, follow-up e proposta de valor.'],['Agente financeiro','Simula custos, preços e ponto de equilíbrio.'],['Radar de mercado','Ajuda a pesquisar concorrentes e tendências atuais.'],['Agente de produto','Prioriza melhorias com base em uso e evidências.'],['Agente de marketing','Cria campanhas e conteúdos por segmento.'],['Analista de sucesso/risco','Acompanha hipóteses e indicadores sem inventar probabilidades.'],['Assistente para lojista','Futura função dentro do produto Wayjoy.']];
+const $=s=>document.querySelector(s);
+function load(key, fallback){try{const x=localStorage.getItem('wayjoy_'+key);return x?JSON.parse(x):fallback}catch(e){return fallback}}
+function save(key,val){localStorage.setItem('wayjoy_'+key,JSON.stringify(val))}
+let tasks=load('tasks',defaults), productTasks=load('productTasks',productDefaults), crm=load('crm',[]), decisions=load('decisions',[]), market=load('market',[]), ideas=load('ideas',[]), integrations=load('integrations',[]);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function go(page){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));$('#'+page).classList.remove('hidden');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));let b=document.querySelector(`nav button[data-page="${page}"]`);$('#pageTitle').textContent=b?b.textContent.replace(/^[⌂◎▦♙✦＄⌕▥▣✧◇▤]+\s*/,'').trim():'Visão geral';$('#pageSub').textContent=({inicio:'Uma visão organizada das prioridades da Wayjoy.',estrategia:'Decisões orientadas por evidências.',produto:'Checklist de produto e validação.',crm:'Relacionamento comercial organizado.',marketing:'Campanhas com objetivos claros.',financeiro:'Simulações simples e transparentes.',mercado:'Observações e fontes de mercado.',indicadores:'Acompanhe evidências, não palpites.',agenda:'Organize o que precisa ser feito.',ia:'Funções de IA planejadas para a Wayjoy.',ideias:'Compare valor, esforço e urgência.',documentos:'Prepare materiais para cada público.',integracoes:'Conexões futuras planejadas sem alterar o MVP agora.'})[page]||'';renderAll();window.scrollTo({top:0,behavior:'smooth'})}
+$('#nav').addEventListener('click',e=>{const b=e.target.closest('button[data-page]');if(b)go(b.dataset.page)});
+function taskRows(items,key){return items.map((t,i)=>`<div class="task"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${key}',${i},this.checked)"><div style="flex:1"><strong style="${t.done?'text-decoration:line-through;color:#71818a':''}">${esc(t.task)}</strong><small>${esc(t.owner||'Sem responsável')}${t.due?' · Prazo: '+esc(t.due):''}</small></div><span class="tag ${t.priority==='Alta'?'high':t.done?'done':''}">${t.done?'Concluída':esc(t.priority||'Média')}</span><button class="btn outline" style="padding:5px 8px" onclick="removeTask('${key}',${i})">×</button></div>`).join('')||'<p class="muted" style="font-size:12px">Nenhum item cadastrado.</p>'}
+function toggleTask(key,i,v){let a=key==='tasks'?tasks:productTasks;a[i].done=v;save(key,a);renderAll()}
+function removeTask(key,i){let a=key==='tasks'?tasks:productTasks;a.splice(i,1);save(key,a);renderAll()}
+function addTaskPrompt(){go('agenda');$('#taskForm [name=task]').focus()}
+function renderAll(){
+ $('#homeTasks').innerHTML=taskRows(tasks,'tasks');$('#agendaList').innerHTML=taskRows(tasks,'tasks');$('#productTasks').innerHTML=taskRows(productTasks,'productTasks');
+ $('#moduleCards').innerHTML=modules.map(m=>`<button class="module" onclick="go('${m[0]}')"><span class="emoji">${m[1]}</span><strong>${m[2]}</strong><small>${m[3]}</small></button>`).join('');
+ $('#crmList').innerHTML=crm.map((c,i)=>`<div class="list-row"><div><strong>${esc(c.store)}</strong><div class="muted">${esc(c.contact||'Sem contato')} · ${esc(c.stage)}</div><div class="muted">${esc(c.next||'Sem próxima ação')}</div>${c.notes?'<div class="muted">'+esc(c.notes)+'</div>':''}</div><button class="btn outline" onclick="deleteItem('crm',${i})">Excluir</button></div>`).join('')||'<p class="muted">Nenhum contato registrado.</p>';
+ $('#marketList').innerHTML=market.map((m,i)=>`<div class="list-row"><div><strong>${esc(m.subject)}</strong><div>${esc(m.observation)}</div><div class="muted">${esc(m.source||'Fonte não informada')} · ${esc(m.date)}</div></div><button class="btn outline" onclick="deleteItem('market',${i})">Excluir</button></div>`).join('')||'<p class="muted">Nenhuma observação registrada.</p>';
+ $('#decisionList').innerHTML=decisions.slice().reverse().map((d,i)=>`<div class="list-row"><div style="flex:1"><strong>${esc(d.decision)}</strong><div class="muted">${esc(d.kind)} · Confiança: ${esc(d.confidence)} · ${esc(d.date)}</div><div>${esc(d.evidence||'Sem evidência descrita')}</div></div><button class="btn outline" onclick="deleteItem('decisions',${decisions.length-1-i})">Excluir</button></div>`).join('')||'<p class="muted">Nenhuma decisão registrada. Comece pela visão geral.</p>';
+ $('#countHyp').textContent=decisions.filter(d=>d.kind==='Hipótese').length;$('#countHigh').textContent=decisions.filter(d=>d.confidence==='Alta').length;$('#countTests').textContent=decisions.filter(d=>d.kind==='Resultado de teste').length;
+ $('#agentList').innerHTML=agents.map(a=>`<div class="list-row"><div><strong>${a[0]}</strong><div class="muted">${a[1]}</div></div><span class="tag">Planejado</span></div>`).join('');
+ $('#integrationList').innerHTML=integrations.map((x,i)=>`<div class="list-row"><div><strong>${esc(x.service)} · ${esc(x.priority)}</strong><div>${esc(x.need)}</div><div class="muted">Condição: ${esc(x.condition||'A definir')} · ${esc(x.date)}</div></div><button class="btn outline" onclick="deleteIntegration(${i})">Excluir</button></div>`).join('')||'<p class="muted" style="font-size:12px">Nenhuma necessidade registrada.</p>';
+}
+function deleteItem(key,i){let a=key==='crm'?crm:key==='market'?market:decisions;a.splice(i,1);save(key,a);renderAll()}
+function deleteIntegration(i){integrations.splice(i,1);save('integrations',integrations);renderAll()}
+function dateNow(){return new Date().toLocaleDateString('pt-BR')}
+$('#quickDecision').addEventListener('submit',e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));decisions.push({...d,date:dateNow()});save('decisions',decisions);e.target.reset();renderAll();alert('Registro salvo neste navegador.');});
+$('#strategyForm').addEventListener('submit',e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));$('#strategyOutput').innerHTML=`<div class="notice"><strong>Briefing preparado para o assistente</strong><p><b>Questão:</b> ${esc(d.question)}</p><p><b>Horizonte:</b> ${esc(d.horizon)} · <b>Restrição:</b> ${esc(d.constraint)}</p><p>Solicite ao assistente: fatos conhecidos, hipóteses a validar, opções, riscos, métrica de sucesso e próximos três passos. Este painel não gera respostas de IA sozinho.</p><button class="btn" onclick="copyText(${JSON.stringify('Atue como agente estratégico da Wayjoy. Questão: '+d.question+'. Horizonte: '+d.horizon+'. Restrição: '+d.constraint+'. Separe fatos de hipóteses e indique opções, riscos, métricas e três próximos passos.')})">Copiar pedido para ChatGPT</button></div>`;});
+$('#crmForm').addEventListener('submit',e=>{e.preventDefault();crm.push({...Object.fromEntries(new FormData(e.target)),date:dateNow()});save('crm',crm);e.target.reset();renderAll()});
+$('#marketingForm').addEventListener('submit',e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));let txt=`Crie uma campanha Wayjoy. Segmento: ${d.segment}. Objetivo: ${d.goal}. Canal: ${d.channel}. Oferta/mensagem: ${d.offer||'sugerir sem inventar desconto'}. Entregue mensagem, CTA, métrica e hipótese a testar.`;$('#marketingOutput').innerHTML=`<div class="notice">${esc(txt)}<p><button class="btn" onclick="copyText(${JSON.stringify(txt)})">Copiar pedido para ChatGPT</button></p></div>`});
+$('#financeForm').addEventListener('submit',e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target)),cost=+d.cost,price=+d.price,stores=+d.stores,other=+d.other,rev=price*stores+other,net=rev-cost,breakeven=price>0?Math.ceil(Math.max(0,cost-other)/price):null;$('#financeOutput').innerHTML=`<div class="grid"><div class="card"><div class="metric-label">Receita simulada</div><div class="metric">${rev.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div></div><div class="card"><div class="metric-label">Saldo antes de impostos</div><div class="metric" style="color:${net>=0?'#168b68':'#b56a13'}">${net.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div></div><div class="card"><div class="metric-label">Lojistas para equilíbrio</div><div class="metric">${breakeven===null?'Indefinido':breakeven}</div></div><div class="card"><div class="metric-label">Custo mensal</div><div class="metric">${cost.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div></div></div><p class="muted" style="font-size:11px">Cenário ilustrativo; não inclui impostos, inadimplência, taxas variáveis nem custos ainda desconhecidos.</p>`});
+$('#marketForm').addEventListener('submit',e=>{e.preventDefault();market.push({...Object.fromEntries(new FormData(e.target)),date:dateNow()});save('market',market);e.target.reset();renderAll()});
+$('#taskForm').addEventListener('submit',e=>{e.preventDefault();tasks.push({...Object.fromEntries(new FormData(e.target)),done:false});save('tasks',tasks);e.target.reset();renderAll()});
+$('#ideaForm').addEventListener('submit',e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));let score=(+d.value*2 + +d.revenue + +d.urgency - +d.effort);let verdict=score>=12?'Prioridade para testar':score>=8?'Testar em pequena escala':'Adiar ou simplificar';let idea={...d,score,verdict,date:dateNow()};ideas.push(idea);save('ideas',ideas);$('#ideaOutput').innerHTML=`<div class="notice"><strong>${esc(d.idea)}</strong><p>Pontuação indicativa: ${score}/16 · ${verdict}</p><p>Esta é uma heurística simples, não uma previsão validada. Confirme valor com clientes e custo com a equipe técnica.</p><button class="btn" onclick="copyText(${JSON.stringify('Avalie esta ideia para Wayjoy: '+d.idea+'. Valor '+d.value+'/5, esforço '+d.effort+'/5, receita '+d.revenue+'/5, urgência '+d.urgency+'/5. Separe hipótese de evidência e recomende um teste barato.')})">Copiar pedido para ChatGPT</button></div>`});
+$('#integrationForm').addEventListener('submit',e=>{e.preventDefault();integrations.push({...Object.fromEntries(new FormData(e.target)),date:dateNow()});save('integrations',integrations);e.target.reset();renderAll()});
+$('#docsForm').addEventListener('submit',e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));let txt=`Prepare um(a) ${d.type} para ${d.audience||'público a definir'} sobre a Wayjoy. Objetivo e conteúdo: ${d.brief}. Use somente fatos conhecidos, sinalize hipóteses e inclua próximos passos.`;$('#docsOutput').innerHTML=`<div class="notice">${esc(txt)}<p><button class="btn" onclick="copyText(${JSON.stringify(txt)})">Copiar pedido para ChatGPT</button></p></div>`});
+function copyText(t){navigator.clipboard?.writeText(t).then(()=>alert('Texto copiado.')).catch(()=>prompt('Copie o texto abaixo:',t))||prompt('Copie o texto abaixo:',t)}
+function exportData(){let data={tasks,productTasks,crm,decisions,market,ideas,integrations,exportedAt:new Date().toISOString()};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='wayjoy-control-center-dados.json';a.click();URL.revokeObjectURL(a.href)}
+renderAll();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const DEFAULT_URL = 'https://aszfjpzoafcapebfftjp.supabase.co';
+let supabase = null;
+let currentUser = null;
+let currentProfile = null;
+
+const authShell = document.createElement('div');
+authShell.id = 'authShell';
+authShell.innerHTML = `
+<style>
+#authShell{position:fixed;inset:0;background:#f7f6f0;z-index:99999;display:grid;place-items:center;padding:20px;font-family:Inter,system-ui,sans-serif}
+#authBox{width:min(520px,100%);background:#fff;border:1px solid #dce5e5;border-radius:18px;padding:28px;box-shadow:0 10px 35px #18344818}
+#authBox h1{margin:0 0 8px;color:#102d46;font-size:25px}
+#authBox p{color:#637381;font-size:13px;line-height:1.5}
+#authBox label{display:block;font-size:12px;font-weight:700;margin:14px 0 6px;color:#182a37}
+#authBox input{width:100%;padding:11px;border:1px solid #dce5e5;border-radius:9px;box-sizing:border-box}
+#authBox button{margin-top:16px;border:0;border-radius:10px;padding:11px 15px;background:#102d46;color:#fff;font-weight:700;cursor:pointer}
+#authBox button.secondary{background:#e6f5f2;color:#176b68}
+#authMsg{margin-top:14px;padding:11px;border-radius:10px;font-size:12px;line-height:1.45;display:none}
+#authMsg.ok{display:block;background:#e0f5ef;color:#176e5b}
+#authMsg.err{display:block;background:#fff0ed;color:#9b3b2f}
+#authStatus{font-size:11px;color:#637381;margin-top:12px}
+</style>
+<div id="authBox">
+  <h1>WAYJOY CONTROL</h1>
+  <p id="authIntro">Conecte a Central de Controle ao Supabase. A URL do projeto já está configurada.</p>
+  <label>Project URL</label>
+  <input id="sbUrl" value="${DEFAULT_URL}" readonly>
+  <label>Publishable key</label>
+  <input id="sbKey" type="password" placeholder="Cole aqui a Publishable key do Supabase">
+  <label>E-mail</label>
+  <input id="sbEmail" type="email" value="wayjoysuporte@gmail.com">
+  <label>Senha</label>
+  <input id="sbPassword" type="password" placeholder="Senha do usuário do Supabase">
+  <button id="testBtn">1. Testar conexão</button>
+  <button id="loginBtn" class="secondary">2. Entrar na Central</button>
+  <div id="authMsg"></div>
+  <div id="authStatus">A chave fica apenas nesta sessão do navegador.</div>
+</div>`;
+document.body.prepend(authShell);
+
+const msg = (text, type='ok') => {
+  const el=document.querySelector('#authMsg'); el.textContent=text; el.className=type; el.style.display='block';
+};
+
+async function initClient(){
+  const url=document.querySelector('#sbUrl').value.trim();
+  const key=document.querySelector('#sbKey').value.trim();
+  if(!url || !key) throw new Error('Informe a Publishable key. Não use a service_role/secret.');
+  supabase=createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  return supabase;
+}
+
+document.querySelector('#testBtn').onclick=async()=>{
+  try{
+    await initClient();
+    const {data:{session},error}=await supabase.auth.getSession();
+    if(error) throw error;
+    msg(session ? 'Conexão OK. Já existe uma sessão autenticada neste navegador.' :
+      'Conexão com o Supabase OK. Agora clique em “Entrar na Central”.');
+  }catch(e){
+    msg('Falha na conexão: '+(e?.message||e), 'err');
+  }
+};
+
+document.querySelector('#loginBtn').onclick=async()=>{
+  try{
+    await initClient();
+    const email=document.querySelector('#sbEmail').value.trim();
+    const password=document.querySelector('#sbPassword').value;
+    if(!email || !password) throw new Error('Informe e-mail e senha.');
+    const {data,error}=await supabase.auth.signInWithPassword({email,password});
+    if(error) throw error;
+    currentUser=data.user;
+    const {data:profile,error:pErr}=await supabase.from('team_profiles')
+      .select('user_id,full_name,role,active').eq('user_id',currentUser.id).maybeSingle();
+    if(pErr) throw pErr;
+    if(!profile) throw new Error('Usuário autenticado, mas não existe em team_profiles.');
+    if(!profile.active) throw new Error('Seu perfil está inativo.');
+    currentProfile=profile;
+    authShell.remove();
+    window.__wayjoySupabase=supabase;
+    window.__wayjoyUser=currentUser;
+    window.__wayjoyProfile=currentProfile;
+    if(typeof window.startWayjoySync==='function') window.startWayjoySync();
+  }catch(e){
+    msg('Não foi possível entrar: '+(e?.message||e), 'err');
+  }
+};
+</script>
+
+<script type="module">
+const waitForClient = setInterval(()=>{
+  const sb=window.__wayjoySupabase;
+  const user=window.__wayjoyUser;
+  if(!sb || !user) return;
+  clearInterval(waitForClient);
+
+  window.startWayjoySync = async function(){
+    try{
+      const {data:dbTasks,error:tErr}=await sb.from('tasks')
+        .select('id,title,description,area,status,priority,assigned_to,due_date,created_by,created_at,updated_at')
+        .order('created_at',{ascending:false});
+      if(tErr) throw tErr;
+
+      const mapped=(dbTasks||[]).map(t=>({
+        id:t.id, task:t.title, priority:
+          t.priority==='critica'?'Crítica':t.priority==='alta'?'Alta':t.priority==='baixa'?'Baixa':'Média',
+        owner:t.assigned_to||'', due:t.due_date||'', done:t.status==='concluida'
+      }));
+      tasks=mapped.length?mapped:tasks;
+      renderAll();
+
+      const {data:dbDecisions,error:dErr}=await sb.from('decisions')
+        .select('id,title,rationale,status,owner_id,created_by,created_at,updated_at')
+        .order('created_at',{ascending:false});
+      if(dErr) throw dErr;
+      decisions=(dbDecisions||[]).map(d=>({
+        id:d.id, decision:d.title, confidence:d.status==='aprovada'?'Alta':d.status==='rejeitada'?'Baixa':'Média',
+        kind:d.status==='proposta'?'Hipótese':d.status==='aprovada'?'Decisão':'Resultado de teste',
+        evidence:d.rationale, date:new Date(d.created_at).toLocaleDateString('pt-BR')
+      }));
+      renderAll();
+
+      const status=document.querySelector('.status');
+      if(status) status.textContent='● Supabase conectado';
+    }catch(e){
+      const status=document.querySelector('.status');
+      if(status) { status.textContent='● Erro de sincronização'; status.style.background='#fff0ed'; status.style.color='#9b3b2f'; }
+      console.error(e);
+    }
+  };
+
+  // Override task save actions so new tasks are written to Supabase.
+  const oldTaskSubmit=document.querySelector('#taskForm');
+  if(oldTaskSubmit){
+    oldTaskSubmit.addEventListener('submit', async e=>{
+      e.preventDefault();
+      const fd=Object.fromEntries(new FormData(oldTaskSubmit));
+      try{
+        const {error}=await sb.from('tasks').insert({
+          title:fd.task, description:'', area:'Geral',
+          status:'a_fazer',
+          priority:fd.priority==='Alta'?'alta':fd.priority==='Baixa'?'baixa':'media',
+          due_date:fd.due||null, created_by:window.__wayjoyUser.id
+        });
+        if(error) throw error;
+        await window.startWayjoySync();
+        oldTaskSubmit.reset();
+      }catch(err){ alert('Não foi possível salvar a tarefa no Supabase: '+err.message); }
+    }, true);
+  }
+
+  await window.startWayjoySync();
+};
+</script>
+</body>
+</html>
